@@ -1,46 +1,50 @@
-import { motion, AnimatePresence } from "framer-motion";
-
-const backdrop = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 }
-};
-
-const modal = {
-  hidden: { y: "-100vh", opacity: 0 },
-  visible: { y: "0", opacity: 1, transition: { delay: 0.1 } }
-};
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./components/ui/dialog";
+import { Button } from "./components/ui/button";
 
 const ProductModal = ({ product, onClose }) => {
   return (
-    <AnimatePresence>
-      {product && (
-        <motion.div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          variants={backdrop}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          onClick={onClose}
-        >
-          <motion.div
-            variants={modal}
-            className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img src={product.image} alt={product.name} className="w-full rounded mb-4" />
-            <h2 className="text-xl font-bold mb-2">{product.name}</h2>
-            <p className="text-blue-600 font-semibold mb-2">Rp {product.price.toLocaleString()}</p>
-            <p className="text-gray-700 mb-4">{product.description}</p>
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Tutup
-            </button>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="pr-6 text-base sm:text-lg">
+            {product?.name}
+          </DialogTitle>
+          <DialogDescription>
+            Rp {product?.price?.toLocaleString()}
+          </DialogDescription>
+        </DialogHeader>
+
+        {product && (
+          <div className="space-y-4">
+            <div className="overflow-hidden rounded-lg bg-muted -mx-2 sm:mx-0">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full max-h-64 sm:max-h-80 object-cover"
+              />
+            </div>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              {product.description}
+            </p>
+            <p className="text-xl sm:text-2xl font-bold">
+              Rp {product.price.toLocaleString()}
+            </p>
+          </div>
+        )}
+
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" onClick={onClose}>
+            Tutup
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
